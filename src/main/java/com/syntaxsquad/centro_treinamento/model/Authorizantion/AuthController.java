@@ -1,13 +1,16 @@
 package com.syntaxsquad.centro_treinamento.model.Authorizantion;
 
+import com.syntaxsquad.centro_treinamento.model.infra.security.TokenService;
 import com.syntaxsquad.centro_treinamento.model.user.User;
 import com.syntaxsquad.centro_treinamento.model.user.UserRepository;
+import com.syntaxsquad.centro_treinamento.model.user.UserRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,52 +20,38 @@ import javax.validation.Valid;
 public class AuthController {
 
     @Autowired
-    private AuthorizationService authorizationService;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TokenService tokenService;
+
     @PostMapping("/login")
-public ResponseEntity<String> login(@Valid @RequestBody LoginRequest loginRequest) {
-    try {
-        // Autenticar o usuário
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
-
-        // Se a autenticação foi bem-sucedida, gerar o token
-        User user = (User) authorizationService.loadUserByUsername(loginRequest.getUsername());
-        String token = authorizationService.generateToken(user);
-
-        // Retornar o token
-        return ResponseEntity.ok(token);
-    } catch (Exception e) {
-        // Retornar erro adequado se a autenticação falhar
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
+        var usernamePassword = new UsernamePasswordAuthenticationToken(authRequest.getEmail(),
+                authRequest.getPassword());
+        var auth = this.authenticationManager.authenticate(usernamePassword);
+        
+        // Gere o token usando o email do usuário autenticado
+        var token = tokenService.generateToken(authRequest.getEmail());
+        return ResponseEntity.ok(new AuthResponse(token));
     }
-}
 
-
-    // Classe interna para o Request de Login
-    public static class LoginRequest {
-        private String username;
-        private String password;
-
-        // Getters e Setters
-        public String getUsername() {
-            return username;
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(@Valid @RequestBody UserRequest userRequest) {
+        if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userRequest.getPassword());
+        User newUser = new User();
+        newUser.setEmail(userRequest.getEmail());
+        newUser.setPassword(encryptedPassword);
+        newUser.setRole(userRequest.getRole());
+        userRepository.save(newUser);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

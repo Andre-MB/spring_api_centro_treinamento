@@ -1,10 +1,14 @@
 package com.syntaxsquad.centro_treinamento.model.Authorizantion;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class AuthRequest {
+     @NotBlank
     private String email;
+
+    @NotBlank
     private String password;
 
-    // Getters e Setters
     public String getEmail() {
         return email;
     }

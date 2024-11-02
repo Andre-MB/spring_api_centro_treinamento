@@ -1,11 +1,12 @@
 package com.syntaxsquad.centro_treinamento.model.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
-
-import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")
@@ -18,17 +19,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public UserResponse createUser(@Valid @RequestBody UserRequest userRequest) {
-        return userService.createUser(userRequest);
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
+        UserResponse userResponse = userService.findUserByEmail(email);
+        if (userResponse != null) {
+            return ResponseEntity.ok(userResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
-
-    
-
-    @GetMapping("/email")
-    public UserResponse getUserByEmail(@RequestParam String email) {
-        return userService.findUserByEmail(email);
-    }
-
-  
 }

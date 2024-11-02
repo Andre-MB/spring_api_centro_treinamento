@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.*;
 import com.syntaxsquad.centro_treinamento.model.user.User;
 import com.syntaxsquad.centro_treinamento.model.user.UserService;
 
-
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -25,8 +25,8 @@ public class AdminController {
 
     @PostMapping
     public AdminResponse createAdmin(@Valid @RequestBody AdminRequest adminRequest) {
-        // Converter a String de birthDate para LocalDate
-        LocalDate birthDate = LocalDate.parse(adminRequest.getBirthDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        // Converter a String de birthDate para LocalDate no formato "YYYY-MM-DD"
+        LocalDate birthDate = LocalDate.parse(adminRequest.getBirthDate(), DateTimeFormatter.ISO_LOCAL_DATE);
 
         // Criar objeto Admin
         Admin admin = new Admin();
@@ -60,5 +60,16 @@ public class AdminController {
         );
     }
 
-
+    @GetMapping("/all")
+    public List<AdminResponse> getAllAdmins() {
+        List<Admin> admins = adminService.getAllAdmins();
+        return admins.stream()
+                .map(admin -> new AdminResponse(
+                    admin.getCpf(),
+                    admin.getName(),
+                    admin.getBirthDate(),
+                    admin.getUser().getId()
+                ))
+                .toList();
+    }
 }

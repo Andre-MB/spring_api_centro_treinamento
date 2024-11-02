@@ -7,18 +7,24 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
 
     @Autowired
-    private CustomUserDetailsService userDetailsService; // Injete seu UserDetailsService
+    private CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private SecurityFilter SecurityFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -26,18 +32,25 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers(HttpMethod.POST, "/auth/login").permitAll() // Permitir acesso ao login
-                    .requestMatchers(HttpMethod.POST, "/admin").hasRole("ADMIN")
-                    .anyRequest().authenticated() // Permite autenticação para todas as outras rotas
+                    .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/users/email/{email}").hasAnyAuthority("ROLE_STUDENT", "ROLE_ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/admin/{cpf}").hasAnyAuthority("ROLE_STUDENT", "ROLE_ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/admin/all").hasAnyAuthority("ROLE_STUDENT", "ROLE_ADMIN")
+                    .anyRequest().authenticated() // Certifique-se de que esta linha esteja por último
                 )
+                .addFilterBefore(SecurityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+    
+
+    @Bean
+    public AuthenticationManager authManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public AuthenticationManager authManager(HttpSecurity httpSecurity) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = 
-                httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userDetailsService); // Configure o UserDetailsService
-        return authenticationManagerBuilder.build();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

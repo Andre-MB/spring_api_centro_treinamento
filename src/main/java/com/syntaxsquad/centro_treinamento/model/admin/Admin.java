@@ -1,6 +1,10 @@
 package com.syntaxsquad.centro_treinamento.model.admin;
 
-import java.time.LocalDate;  
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.syntaxsquad.centro_treinamento.model.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +24,8 @@ public class Admin {
     @Column(nullable = false)
     private String name;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(nullable = false)
     private LocalDate birthDate;  
 

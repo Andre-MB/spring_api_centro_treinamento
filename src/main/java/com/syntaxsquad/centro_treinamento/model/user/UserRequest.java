@@ -1,18 +1,19 @@
 package com.syntaxsquad.centro_treinamento.model.user;
 
+import com.syntaxsquad.centro_treinamento.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class UserRequest {
 
+    @Email
     @NotBlank
     private String email;
 
     @NotBlank
     private String password;
 
-    @NotBlank
-    private String role; // Poderia ser um enum se você desejar
+    private Role role; // Utilizando o enum Role
 
     // Getters e Setters
     public String getEmail() {
@@ -31,11 +32,11 @@ public class UserRequest {
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

@@ -18,6 +18,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 
 @Entity
 @Table(name = "users")
@@ -27,6 +28,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -77,29 +79,21 @@ public class User implements UserDetails {
 
     // Implementação de UserDetails
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-
-        // Define as permissões básicas do estudante
-        if (role == Role.STUDENT) {
-            authorities.add(new SimpleGrantedAuthority("STUDENT_PERMISSION_1"));
-            authorities.add(new SimpleGrantedAuthority("STUDENT_PERMISSION_2"));
-        }
-
-        // Treinador herda permissões do estudante
-        if (role == Role.TRAINER || role == Role.ADMIN) {
-            authorities.add(new SimpleGrantedAuthority("TRAINER_PERMISSION_1"));
-            authorities.addAll(getStudentPermissions()); // Herdando as permissões de estudante
-        }
-
-        // Admin herda permissões de treinador e estudante
-        if (role == Role.ADMIN) {
-            authorities.add(new SimpleGrantedAuthority("ADMIN_PERMISSION_1"));
-            authorities.addAll(getTrainerPermissions()); // Herdando as permissões de treinador
-        }
-
-        return authorities;
+public Collection<? extends GrantedAuthority> getAuthorities() {
+    List<GrantedAuthority> authorities = new ArrayList<>();
+    if (role == Role.STUDENT) {
+        authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
+    } else if (role == Role.TRAINER) {
+        authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
+    } else if (role == Role.ADMIN) {
+        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
     }
+    System.out.println("Authorities: " + authorities); // Log para verificar as autoridades
+    return authorities;
+}
 
     // Métodos auxiliares para as permissões herdadas
     private Collection<GrantedAuthority> getStudentPermissions() {
