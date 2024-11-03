@@ -10,10 +10,13 @@ public class UserRequest {
     @NotBlank
     private String email;
 
-    @NotBlank
     private String password;
-
-    private Role role; // Utilizando o enum Role
+    private Role role;
+    private String name;
+    private String lastNome;
+    private String birthDate;
+    private String createdAt;
+    private String imageUrl;
 
     // Getters e Setters
     public String getEmail() {
@@ -39,4 +42,45 @@ public class UserRequest {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastNome() {
+        return lastNome;
+    }
+
+    public void setLastNome(String lastNome) {
+        this.lastNome = lastNome;
+    }
+    
 }

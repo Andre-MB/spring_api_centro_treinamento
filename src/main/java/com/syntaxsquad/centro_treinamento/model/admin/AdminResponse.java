@@ -6,14 +6,10 @@ import java.util.UUID;
 public class AdminResponse {
 
     private String cpf;
-    private String name;
-    private LocalDate birthDate;
     private UUID userId;
 
-    public AdminResponse(String cpf, String name, LocalDate birthDate, UUID userId) {
+    public AdminResponse(String cpf,  UUID userId) {
         this.cpf = cpf;
-        this.name = name;
-        this.birthDate = birthDate;
         this.userId = userId;
     }
 
@@ -22,13 +18,7 @@ public class AdminResponse {
         return cpf;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
+    
 
     public UUID getUserId() {
         return userId;

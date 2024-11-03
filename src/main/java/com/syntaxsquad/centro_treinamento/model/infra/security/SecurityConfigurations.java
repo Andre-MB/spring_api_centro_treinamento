@@ -37,6 +37,7 @@ public class SecurityConfigurations {
                     .requestMatchers(HttpMethod.GET, "/users/email/{email}").hasAnyAuthority("ROLE_STUDENT", "ROLE_ADMIN")
                     .requestMatchers(HttpMethod.GET, "/admin/{cpf}").hasAnyAuthority("ROLE_STUDENT", "ROLE_ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/admin/all").hasAnyAuthority("ROLE_STUDENT", "ROLE_ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/admin").hasAnyAuthority("ROLE_ADMIN", "ROLE_STUDENT")
                     .anyRequest().authenticated() // Certifique-se de que esta linha esteja por último
                 )
                 .addFilterBefore(SecurityFilter, UsernamePasswordAuthenticationFilter.class)

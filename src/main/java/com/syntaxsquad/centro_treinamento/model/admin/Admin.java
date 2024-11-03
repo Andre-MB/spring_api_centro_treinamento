@@ -17,47 +17,16 @@ import jakarta.persistence.Table;
 @Table(name = "admin")
 public class Admin {
 
-    @Id
+    
     @Column(nullable = false, unique = true)
+    @Id
     private String cpf;
-
-    @Column(nullable = false)
-    private String name;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(nullable = false)
-    private LocalDate birthDate;  
-
+ 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     // Getters e Setters
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public LocalDate getBirthDate() {  
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {  
-        this.birthDate = birthDate;
-    }
-
     public User getUser() {
         return user;
     }
@@ -65,17 +34,12 @@ public class Admin {
     public void setUser(User user) {
         this.user = user;
     }
-
-    @Override
-    public String toString() {
-        return "Admin{" +
-                "cpf='" + cpf + '\'' +
-                ", name='" + name + '\'' +
-                ", birthDate=" + birthDate +
-                ", user=" + user +
-                '}';
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
-
+    public String getCpf() {
+        return cpf;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

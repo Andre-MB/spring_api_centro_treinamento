@@ -12,16 +12,8 @@ public class AdminRequest {
     @Pattern(regexp = "\\d{11}", message = "CPF deve ter 11 dígitos")
     private String cpf;
 
-    @NotBlank(message = "Nome é obrigatório")
-    private String name;
-
-    @NotBlank(message = "Data de nascimento é obrigatória")
-    private String birthDate; // Mantemos como String para receber da requisição
-
     @NotBlank(message = "ID do usuário é obrigatório")
-    private UUID  userId;  // ID do usuário relacionado ao admin
-
-  
+    private UUID userId; // ID do usuário relacionado ao admin
 
     // Getters e Setters
     public String getCpf() {
@@ -32,27 +24,11 @@ public class AdminRequest {
         this.cpf = cpf;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(String birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public UUID  getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID  userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 }

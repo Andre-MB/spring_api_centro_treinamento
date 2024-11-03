@@ -1,7 +1,8 @@
 package com.syntaxsquad.centro_treinamento.model.user;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +20,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 
 @Entity
 @Table(name = "users")
@@ -38,6 +42,33 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @NotBlank(message = "Nome é obrigatório")
+    @Column(nullable = false)
+    private String name;
+
+    @NotBlank(message = "Sobrenome é obrigatório")
+    @Column(name = "last_nome", nullable = false)
+    private String lastNome;
+    
+
+    @NotNull(message = "Data de nascimento é obrigatória")
+    @Past(message = "Data de nascimento deve estar no passado")
+    @Column(nullable = false)
+    private LocalDate birthDate;
+
+    @NotNull(message = "Data de criação é obrigatória")
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @NotBlank(message = "Url de imagem é obrigatória")
+    @Column(nullable = false)
+    private String imageUrl;
+
+    // Construtor padrão
+    public User() {
+        this.createdAt = LocalDateTime.now(); // Inicializa com a data e hora atuais
+    }
+
     // Getters e Setters
     public UUID getId() {
         return id;
@@ -52,9 +83,6 @@ public class User implements UserDetails {
     }
 
     public void setEmail(String email) {
-        if (email == null || !email.contains("@")) {
-            throw new IllegalArgumentException("Email inválido.");
-        }
         this.email = email;
     }
 
@@ -63,9 +91,6 @@ public class User implements UserDetails {
     }
 
     public void setPassword(String password) {
-        if (password == null || password.length() < 6) { // Exemplo de validação simples
-            throw new IllegalArgumentException("A senha deve ter pelo menos 6 caracteres.");
-        }
         this.password = password;
     }
 
@@ -77,63 +102,81 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastNome() {
+        return lastNome;
+    }
+
+    public void setLastNome(String lastNome) {
+        this.lastNome = lastNome;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     // Implementação de UserDetails
     @Override
-public Collection<? extends GrantedAuthority> getAuthorities() {
-    List<GrantedAuthority> authorities = new ArrayList<>();
-    if (role == Role.STUDENT) {
-        authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
-    } else if (role == Role.TRAINER) {
-        authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
-        authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
-    } else if (role == Role.ADMIN) {
-        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
-        authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
-    }
-    System.out.println("Authorities: " + authorities); // Log para verificar as autoridades
-    return authorities;
-}
-
-    // Métodos auxiliares para as permissões herdadas
-    private Collection<GrantedAuthority> getStudentPermissions() {
-        return Arrays.asList(
-            new SimpleGrantedAuthority("STUDENT_PERMISSION_1"),
-            new SimpleGrantedAuthority("STUDENT_PERMISSION_2")
-        );
-    }
-
-    private Collection<GrantedAuthority> getTrainerPermissions() {
-        return Arrays.asList(
-            new SimpleGrantedAuthority("TRAINER_PERMISSION_1"),
-            new SimpleGrantedAuthority("STUDENT_PERMISSION_1"),
-            new SimpleGrantedAuthority("STUDENT_PERMISSION_2")
-        );
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (role == Role.STUDENT) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
+        } else if (role == Role.TRAINER) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
+        } else if (role == Role.ADMIN) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
+        }
+        return authorities;
     }
 
     @Override
     public String getUsername() {
-        // Usa o email como nome de usuário
         return email;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Aqui, true significa que a conta nunca expira. Ajuste se necessário.
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // true indica que a conta nunca está bloqueada.
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // As credenciais nunca expiram.
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // Define se o usuário está ativo. Modifique conforme a lógica do seu sistema.
+        return true;
     }
 }

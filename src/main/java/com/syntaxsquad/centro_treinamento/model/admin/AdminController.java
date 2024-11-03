@@ -25,14 +25,11 @@ public class AdminController {
 
     @PostMapping
     public AdminResponse createAdmin(@Valid @RequestBody AdminRequest adminRequest) {
-        // Converter a String de birthDate para LocalDate no formato "YYYY-MM-DD"
-        LocalDate birthDate = LocalDate.parse(adminRequest.getBirthDate(), DateTimeFormatter.ISO_LOCAL_DATE);
-
+       
         // Criar objeto Admin
         Admin admin = new Admin();
         admin.setCpf(adminRequest.getCpf());
-        admin.setName(adminRequest.getName());
-        admin.setBirthDate(birthDate);
+        
 
         // Buscar o usuário correspondente pelo ID
         User user = userService.findUserById(adminRequest.getUserId()); // Buscando usuário pelo userId
@@ -41,10 +38,9 @@ public class AdminController {
         // Salvar o administrador
         Admin savedAdmin = adminService.createAdmin(admin);
 
+        // Converter o objeto Admin para AdminResponse
         return new AdminResponse(
             savedAdmin.getCpf(),
-            savedAdmin.getName(),
-            savedAdmin.getBirthDate(),
             savedAdmin.getUser().getId()
         );
     }
@@ -54,8 +50,6 @@ public class AdminController {
         Admin admin = adminService.getAdminByCpf(cpf);
         return new AdminResponse(
             admin.getCpf(),
-            admin.getName(),
-            admin.getBirthDate(),
             admin.getUser().getId()
         );
     }
@@ -66,10 +60,23 @@ public class AdminController {
         return admins.stream()
                 .map(admin -> new AdminResponse(
                     admin.getCpf(),
-                    admin.getName(),
-                    admin.getBirthDate(),
                     admin.getUser().getId()
                 ))
                 .toList();
+    }
+    @DeleteMapping("/{cpf}")
+    public void deleteAdmin(@PathVariable String cpf) {
+        adminService.deleteAdmin(cpf);
+    }
+    @PutMapping
+    public AdminResponse updateAdmin(@RequestBody AdminRequest adminRequest) {
+        Admin admin = new Admin();
+        admin.setCpf(adminRequest.getCpf());
+        admin.setUser(userService.findUserById(adminRequest.getUserId()));
+        Admin updatedAdmin = adminService.createAdmin(admin);
+        return new AdminResponse(
+            updatedAdmin.getCpf(),
+            updatedAdmin.getUser().getId()
+        );
     }
 }
