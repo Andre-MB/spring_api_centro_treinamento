@@ -29,16 +29,20 @@ import jakarta.validation.constraints.Past;
 public class User implements UserDetails {
 
     @Id
+    @NotBlank(message = "ID é obrigatório")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Email
+    @NotBlank(message = "Email é obrigatório")
     @Column(nullable = false, unique = true)
     private String email;
 
+    @NotBlank(message = "Senha é obrigatório")
     @Column(nullable = false)
     private String password;
 
+    @NotBlank(message = "Cargo é obrigatório")
     @Column(nullable = false)
     private Role role;
 
