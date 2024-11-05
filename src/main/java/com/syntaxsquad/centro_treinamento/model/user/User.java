@@ -72,6 +72,7 @@ public class User implements UserDetails {
     public User() {
         this.createdAt = LocalDateTime.now(); // Inicializa com a data e hora atuais
     }
+    
 
     // Getters e Setters
     public UUID getId() {
@@ -183,4 +184,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

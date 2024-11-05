@@ -1,13 +1,23 @@
 package com.syntaxsquad.centro_treinamento.model.user;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.syntaxsquad.centro_treinamento.model.user.User;
+import com.syntaxsquad.centro_treinamento.model.user.UserRepository;
+import com.syntaxsquad.centro_treinamento.model.user.UserRequest;
+import com.syntaxsquad.centro_treinamento.model.user.UserResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -22,9 +32,6 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    // Método para inserir um novo usuário
-   
-
     // Método para selecionar um usuário pelo email
     @GetMapping("/email/{email}")
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
@@ -38,8 +45,7 @@ public class UserController {
 
     // Método para atualizar o email do usuário
     @PutMapping("/email/{email}")
-    public ResponseEntity<UserResponse> updateUserEmail(@PathVariable String email,
-            @RequestBody UserRequest userRequest) {
+    public ResponseEntity<UserResponse> updateUserEmail(@PathVariable String email, @RequestBody UserRequest userRequest) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -50,8 +56,16 @@ public class UserController {
         // Você pode também atualizar outros campos do usuário aqui, se necessário
 
         User updatedUser = userRepository.save(user);
-        UserResponse userResponse = new UserResponse(updatedUser.getEmail(), updatedUser.getName(),
-                updatedUser.getLastNome(), updatedUser.getImageUrl(), updatedUser.getRole().name());
+        UserResponse userResponse = new UserResponse(
+                updatedUser.getId(),
+                updatedUser.getEmail(),
+                updatedUser.getRole().name(),
+                updatedUser.getName(),
+                updatedUser.getLastNome(),
+                updatedUser.getBirthDate(),
+                updatedUser.getCreatedAt(),
+                updatedUser.getImageUrl()
+        );
 
         return ResponseEntity.ok(userResponse);
     }
@@ -73,10 +87,17 @@ public class UserController {
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<User> users = userRepository.findAll();
         List<UserResponse> userResponses = users.stream()
-               .map(user -> new UserResponse(user.getEmail(), user.getName(),
-                        user.getLastNome(), user.getImageUrl(), user.getRole().name()))
+               .map(user -> new UserResponse(
+                        user.getId(),
+                        user.getEmail(),
+                        user.getRole().name(),
+                        user.getName(),
+                        user.getLastNome(),
+                        user.getBirthDate(),
+                        user.getCreatedAt(),
+                        user.getImageUrl()
+                ))
                .collect(Collectors.toList());
-                return ResponseEntity.ok(userResponses);
+        return ResponseEntity.ok(userResponses);
     }
-    
 }

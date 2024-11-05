@@ -29,7 +29,14 @@ public class UserService {
     public UserResponse findUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        return new UserResponse(user.getId(), user.getEmail(), user.getRole().name());
+        return new UserResponse(user.getId(),
+        user.getEmail(),
+        user.getRole().name(),
+        user.getName(),
+        user.getLastNome(),
+        user.getBirthDate(),
+        user.getCreatedAt(),
+        user.getImageUrl());
     }
 
  
