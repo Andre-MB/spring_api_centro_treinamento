@@ -1,10 +1,11 @@
 package com.syntaxsquad.centro_treinamento.model.mensalidade;
 
-import com.syntaxsquad.centro_treinamento.model.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.syntaxsquad.centro_treinamento.model.alunos.Alunos;
 
 import java.util.List;
 

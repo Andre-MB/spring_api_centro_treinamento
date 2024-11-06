@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION verificar_unico_usuario_admin()
 RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (SELECT 1 FROM trainer WHERE user_id = NEW.user_id)
-       OR EXISTS (SELECT 1 FROM client WHERE user_id = NEW.user_id) THEN
+       OR EXISTS (SELECT 1 FROM alunos WHERE user_id = NEW.user_id) THEN
         RAISE EXCEPTION 'user_id já existe em trainer ou client';
     END IF;
     RETURN NEW;
@@ -23,7 +23,7 @@ CREATE OR REPLACE FUNCTION verificar_unico_usuario_trainer()
 RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (SELECT 1 FROM admin WHERE user_id = NEW.user_id)
-       OR EXISTS (SELECT 1 FROM client WHERE user_id = NEW.user_id) THEN
+       OR EXISTS (SELECT 1 FROM alunos WHERE user_id = NEW.user_id) THEN
         RAISE EXCEPTION 'user_id já existe em admin ou client';
     END IF;
     RETURN NEW;

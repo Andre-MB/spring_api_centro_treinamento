@@ -1,4 +1,4 @@
-package com.syntaxsquad.centro_treinamento.model.client;
+package com.syntaxsquad.centro_treinamento.model.alunos;
 
 
 
@@ -13,8 +13,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "client")
-public class Client  {
+@Table(name = "alunos")
+public class Alunos  {
 
     @Id
     @NotBlank(message = "CPF é obrigatório")

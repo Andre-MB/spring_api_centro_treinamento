@@ -1,9 +1,10 @@
 package com.syntaxsquad.centro_treinamento.model.mensalidade;
 
-import com.syntaxsquad.centro_treinamento.model.client.Client;
-import com.syntaxsquad.centro_treinamento.model.client.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.syntaxsquad.centro_treinamento.model.alunos.Alunos;
+import com.syntaxsquad.centro_treinamento.model.alunos.AlunoRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,12 +17,12 @@ public class MensalidadeService {
     private MensalidadeRepository mensalidadeRepository;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private AlunoRepository clientRepository;
 
     // Método para criar uma nova mensalidade
     public MensalidadeResponse createMensalidade(MensalidadeRequest request) {
         // Verifica se o cliente existe pelo CPF
-        Optional<Client> clientOpt = clientRepository.findByCpf(request.getClientId());
+        Optional<Alunos> clientOpt = clientRepository.findByCpf(request.getClientId());
         if (clientOpt.isEmpty()) {
             throw new RuntimeException("Cliente não encontrado para o CPF fornecido.");
         }

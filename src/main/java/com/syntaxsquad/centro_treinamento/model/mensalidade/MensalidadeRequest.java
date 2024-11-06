@@ -3,7 +3,7 @@ package com.syntaxsquad.centro_treinamento.model.mensalidade;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.syntaxsquad.centro_treinamento.model.client.Client;
+import com.syntaxsquad.centro_treinamento.model.alunos.Alunos;
 
 import jakarta.validation.constraints.NotNull;
 

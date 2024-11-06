@@ -1,4 +1,4 @@
-package com.syntaxsquad.centro_treinamento.model.client;
+package com.syntaxsquad.centro_treinamento.model.alunos;
 
 import com.syntaxsquad.centro_treinamento.model.user.User;
 import com.syntaxsquad.centro_treinamento.model.user.UserRepository;
@@ -13,35 +13,35 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ClientService {
+public class AlunoService {
 
     @Autowired
-    private ClientRepository clientRepository;
+    private AlunoRepository clientRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    public Client save(ClientRequest clientRequest) {
+    public Alunos save(AlunoRequest clientRequest) {
         User user = userRepository.findById(clientRequest.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        Client client = new Client();
+        Alunos client = new Alunos();
         client.setCpf(clientRequest.getCpf());
         client.setUser(user);
         
         return clientRepository.save(client);
     }
 
-    public Client findByCpf(String cpf) {
+    public Alunos findByCpf(String cpf) {
         return clientRepository.findById(cpf).orElse(null);
     }
 
-    public List<Client> findAll() {
+    public List<Alunos> findAll() {
         return clientRepository.findAll();
     }
 
-    public Client update(String cpf, ClientRequest clientRequest) {
-        Client client = clientRepository.findById(cpf).orElse(null);
+    public Alunos update(String cpf, AlunoRequest clientRequest) {
+        Alunos client = clientRepository.findById(cpf).orElse(null);
         if (client == null) {
             return null;
         }
@@ -56,7 +56,7 @@ public class ClientService {
     }
 
     public boolean deleteByCpf(String cpf) {
-        Client client = clientRepository.findById(cpf).orElse(null);
+        Alunos client = clientRepository.findById(cpf).orElse(null);
         if (client == null) {
             return false;
         }
