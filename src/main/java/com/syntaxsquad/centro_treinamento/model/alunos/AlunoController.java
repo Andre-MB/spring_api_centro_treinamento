@@ -1,4 +1,4 @@
-package com.syntaxsquad.centro_treinamento.model.client;
+package com.syntaxsquad.centro_treinamento.model.alunos;
 
 import com.syntaxsquad.centro_treinamento.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,19 +9,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/clients")
-public class ClientController {
+@RequestMapping("/alunos")
+public class AlunoController {
 
     @Autowired
-    private ClientService clientService;
+    private AlunoService clientService;
 
     @GetMapping("/{cpf}")
-    public ResponseEntity<ClientResponse> getClientByCpf(@PathVariable String cpf) {
-        Client client = clientService.findByCpf(cpf);
+    public ResponseEntity<AlunoResponse> getClientByCpf(@PathVariable String cpf) {
+        Alunos client = clientService.findByCpf(cpf);
         if (client == null) {
             return ResponseEntity.notFound().build();
         }
-        ClientResponse response = new ClientResponse(
+        AlunoResponse response = new AlunoResponse(
                 client.getCpf(),
                 client.getUser().getId()
         );
@@ -29,10 +29,10 @@ public class ClientController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ClientResponse>> getAllClients() {
-        List<Client> clients = clientService.findAll();
-        List<ClientResponse> responses = clients.stream()
-                .map(client -> new ClientResponse(
+    public ResponseEntity<List<AlunoResponse>> getAllClients() {
+        List<Alunos> clients = clientService.findAll();
+        List<AlunoResponse> responses = clients.stream()
+                .map(client -> new AlunoResponse(
                         client.getCpf(),
                         client.getUser().getId()
                 ))
@@ -41,9 +41,9 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<ClientResponse> createClient(@RequestBody ClientRequest clientRequest) {
-        Client savedClient = clientService.save(clientRequest);
-        ClientResponse response = new ClientResponse(
+    public ResponseEntity<AlunoResponse> createClient(@RequestBody AlunoRequest clientRequest) {
+        Alunos savedClient = clientService.save(clientRequest);
+        AlunoResponse response = new AlunoResponse(
                 savedClient.getCpf(),
                 savedClient.getUser().getId()
         );
@@ -51,12 +51,12 @@ public class ClientController {
     }
 
     @PutMapping("/{cpf}")
-    public ResponseEntity<ClientResponse> updateClient(@PathVariable String cpf, @RequestBody ClientRequest clientRequest) {
-        Client updatedClient = clientService.update(cpf, clientRequest);
+    public ResponseEntity<AlunoResponse> updateClient(@PathVariable String cpf, @RequestBody AlunoRequest clientRequest) {
+        Alunos updatedClient = clientService.update(cpf, clientRequest);
         if (updatedClient == null) {
             return ResponseEntity.notFound().build();
         }
-        ClientResponse response = new ClientResponse(
+        AlunoResponse response = new AlunoResponse(
                 updatedClient.getCpf(),
                 updatedClient.getUser().getId()
         );

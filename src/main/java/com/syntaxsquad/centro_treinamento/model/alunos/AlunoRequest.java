@@ -1,16 +1,16 @@
-package com.syntaxsquad.centro_treinamento.model.client;
+package com.syntaxsquad.centro_treinamento.model.alunos;
 
 import java.util.UUID;
 
-public class ClientResponse {
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
+public class AlunoRequest {
+    
+    @NotBlank(message = "CPF é obrigatório")
+    @Pattern(regexp = "\\d{11}", message = "CPF deve ter 11 dígitos")
     private String cpf;
     private UUID userId;
-
-    public ClientResponse(String cpf, UUID userId) {
-        this.cpf = cpf;
-        this.userId = userId;
-    }
 
     // Getters e Setters
     public String getCpf() {
