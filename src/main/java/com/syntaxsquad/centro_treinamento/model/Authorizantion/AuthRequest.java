@@ -1,4 +1,4 @@
-package com.syntaxsquad.centro_treinamento.model.Authorizantion;
+package com.syntaxsquad.centro_treinamento.model.authorizantion;
 
 import jakarta.validation.constraints.NotBlank;
 
