@@ -1,4 +1,4 @@
-package com.syntaxsquad.centro_treinamento.model.Authorizantion;
+package com.syntaxsquad.centro_treinamento.model.authorizantion;
 
 public record AuthResponse(String token) {
 
