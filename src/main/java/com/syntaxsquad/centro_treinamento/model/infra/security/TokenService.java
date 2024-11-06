@@ -16,7 +16,7 @@ public class TokenService {
         Algorithm algorithm = Algorithm.HMAC256(secret);
         return JWT.create()
                 .withSubject(email)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 3600000)) // 1 hora
+                .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 h 
                 .sign(algorithm);
     }
 

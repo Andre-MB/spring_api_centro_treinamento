@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -57,7 +58,7 @@ public class Endereco {
     @Column(name = "complemento", nullable = false)
     private String complemento;
 
-    @OneToOne
+    @ManyToOne
     @NotBlank(message = "ID do usuário é obrigatório")
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
