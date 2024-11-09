@@ -1,14 +1,5 @@
 package com.syntaxsquad.centro_treinamento.model.user;
 
-import com.syntaxsquad.centro_treinamento.model.user.User;
-import com.syntaxsquad.centro_treinamento.model.user.UserRepository;
-import com.syntaxsquad.centro_treinamento.model.user.UserRequest;
-import com.syntaxsquad.centro_treinamento.model.user.UserResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,11 +43,16 @@ public class UserController {
 
         User user = optionalUser.get();
         user.setEmail(userRequest.getEmail());
-        // Você pode também atualizar outros campos do usuário aqui, se necessário
+        user.setPassword(userRequest.getPassword());
+        user.setName(userRequest.getName());
+        user.setLastNome(userRequest.getLastNome());
+        user.setImageUrl(userRequest.getImageUrl());
+        user.setRole(userRequest.getRole());
+        
 
         User updatedUser = userRepository.save(user);
         UserResponse userResponse = new UserResponse(
-                updatedUser.getId(),
+                updatedUser.getCpf(),
                 updatedUser.getEmail(),
                 updatedUser.getRole().name(),
                 updatedUser.getName(),
@@ -88,7 +83,7 @@ public class UserController {
         List<User> users = userRepository.findAll();
         List<UserResponse> userResponses = users.stream()
                .map(user -> new UserResponse(
-                        user.getId(),
+                        user.getCpf(),
                         user.getEmail(),
                         user.getRole().name(),
                         user.getName(),
@@ -99,5 +94,27 @@ public class UserController {
                 ))
                .collect(Collectors.toList());
         return ResponseEntity.ok(userResponses);
+    }
+
+    // Método para selecionar um usuário pelo CPF
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity<UserResponse> getUserByCpf(@PathVariable String cpf) {
+        Optional<User> optionalUser = userRepository.findActiveUserByCpf(cpf); // Supondo que você tenha um método para encontrar um usuário ativo por CPF
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            UserResponse userResponse = new UserResponse(
+                    user.getCpf(),
+                    user.getEmail(),
+                    user.getRole().name(),
+                    user.getName(),
+                    user.getLastNome(),
+                    user.getBirthDate(),
+                    user.getCreatedAt(),
+                    user.getImageUrl()
+            );
+            return ResponseEntity.ok(userResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }

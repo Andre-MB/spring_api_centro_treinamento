@@ -1,8 +1,9 @@
 package com.syntaxsquad.centro_treinamento.model.turmas;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.syntaxsquad.centro_treinamento.model.trainer.Trainer;
 import com.syntaxsquad.centro_treinamento.model.treino.Treino;
+import com.syntaxsquad.centro_treinamento.model.user.User;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -21,7 +22,7 @@ public class Turma {
     // Relacionamento Many-to-One com Trainer (Treinador)
     @ManyToOne
     @JoinColumn(name = "trainer_id",nullable = false)
-    private Trainer trainer;
+    private User user;
 
     // Relacionamento Many-to-One com Treino
     @ManyToOne
@@ -51,12 +52,12 @@ public class Turma {
         this.id = id;
     }
 
-    public Trainer getTrainer() {
-        return trainer;
-    }
-
-    public void setTrainer(Trainer trainer) {
-        this.trainer = trainer;
+    public User getUser() {
+        return user;
+    }   
+    
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Treino getTreino() {

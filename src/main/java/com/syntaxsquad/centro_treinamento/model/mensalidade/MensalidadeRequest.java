@@ -3,14 +3,14 @@ package com.syntaxsquad.centro_treinamento.model.mensalidade;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.syntaxsquad.centro_treinamento.model.alunos.Alunos;
+
 
 import jakarta.validation.constraints.NotNull;
 
 public class MensalidadeRequest {
 
     @NotNull
-    private String clientId; //ID DO USERS
+    private String aluno_cpf; 
 
     @NotNull
     private LocalDate dataVencimento;
@@ -24,14 +24,7 @@ public class MensalidadeRequest {
     @NotNull
     private String statusMensalidade;
 
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
+    
     public LocalDate getDataVencimento() {
         return dataVencimento;
     }
@@ -64,7 +57,14 @@ public class MensalidadeRequest {
         this.statusMensalidade = statusMensalidade;
     }
 
-    // Getters e Setters
+    public String getAluno_cpf() {
+        return aluno_cpf;
+    }
+
+    public void setAluno_cpf(String aluno_cpf) {
+        this.aluno_cpf = aluno_cpf;
+    }
+
 
     
 }

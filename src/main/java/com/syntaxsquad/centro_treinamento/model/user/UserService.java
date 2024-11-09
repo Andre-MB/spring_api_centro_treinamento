@@ -21,15 +21,15 @@ public class UserService {
 
    
     // Método que retorna o objeto completo User
-    public User findUserById(UUID userId) {
-        return userRepository.findById(userId)
+    public User findUserById(String cpf) {
+        return userRepository.findActiveUserByCpf(cpf)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
     public UserResponse findUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        return new UserResponse(user.getId(),
+        return new UserResponse(user.getCpf(),
         user.getEmail(),
         user.getRole().name(),
         user.getName(),

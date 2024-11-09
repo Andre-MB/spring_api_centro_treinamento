@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class MensalidadeResponse {
     private UUID id;
-    private String clientId;
+    private String aluno_cpf;
     private LocalDate dataVencimento;
     private LocalDate dataPagamento;
     private double valorMensalidade;
@@ -20,12 +20,12 @@ public class MensalidadeResponse {
         this.id = id;
     }
 
-    public String getClientId() {
-        return clientId;
+    public String getAluno_cpf() {
+        return aluno_cpf;
     }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+    
+    public void setAluno_cpf(String aluno_cpf) {
+        this.aluno_cpf = aluno_cpf;
     }
 
     public LocalDate getDataVencimento() {

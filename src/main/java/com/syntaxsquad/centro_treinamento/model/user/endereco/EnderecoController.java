@@ -1,11 +1,9 @@
 package com.syntaxsquad.centro_treinamento.model.user.endereco;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/enderecos")
@@ -14,88 +12,44 @@ public class EnderecoController {
     @Autowired
     private EnderecoService enderecoService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<EnderecoResponse> getEnderecoById(@PathVariable UUID id) {
-        Endereco endereco = enderecoService.findById(id);
-        if (endereco == null) {
-            return ResponseEntity.notFound().build();
-        }
-        EnderecoResponse response = new EnderecoResponse(
-                endereco.getId(),
-                endereco.getCep(),
-                endereco.getLogradouro(),
-                endereco.getBairro(),
-                endereco.getCidade(),
-                endereco.getEstado(),
-                endereco.getPais(),
-                endereco.getComplemento(),
-                endereco.getUser().getId()
-        );
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<EnderecoResponse>> getAllEnderecos() {
-        List<Endereco> enderecos = enderecoService.findAll();
-        List<EnderecoResponse> responses = enderecos.stream()
-                .map(endereco -> new EnderecoResponse(
-                        endereco.getId(),
-                        endereco.getCep(),
-                        endereco.getLogradouro(),
-                        endereco.getBairro(),
-                        endereco.getCidade(),
-                        endereco.getEstado(),
-                        endereco.getPais(),
-                        endereco.getComplemento(),
-                        endereco.getUser().getId()
-                ))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(responses);
-    }
-
+    // Criar um novo endereço
     @PostMapping
-    public ResponseEntity<EnderecoResponse> createEndereco(@RequestBody EnderecoRequest enderecoRequest) {
-        Endereco savedEndereco = enderecoService.save(enderecoRequest);
-        EnderecoResponse response = new EnderecoResponse(
-                savedEndereco.getId(),
-                savedEndereco.getCep(),
-                savedEndereco.getLogradouro(),
-                savedEndereco.getBairro(),
-                savedEndereco.getCidade(),
-                savedEndereco.getEstado(),
-                savedEndereco.getPais(),
-                savedEndereco.getComplemento(),
-                savedEndereco.getUser().getId()
-        );
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Endereco> createEndereco(@RequestBody EnderecoRequest enderecoRequest) {
+        // Aqui estamos recebendo o CPF do aluno do corpo da requisição
+        String alunoCpf = enderecoRequest.getAluno_cpf(); // Supondo que o CPF do aluno é enviado no corpo da requisição
+        Endereco endereco = enderecoService.save(alunoCpf, enderecoRequest); // Chama o serviço para salvar o endereço
+        return new ResponseEntity<>(endereco, HttpStatus.CREATED); // Retorna o endereço criado com status 201
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<EnderecoResponse> updateEndereco(@PathVariable UUID id, @RequestBody EnderecoRequest enderecoRequest) {
-        Endereco updatedEndereco = enderecoService.update(id, enderecoRequest);
-        if (updatedEndereco == null) {
-            return ResponseEntity.notFound().build();
+    // Atualizar um endereço com base no CPF
+    @PutMapping("/{cpf}")
+    public ResponseEntity<Endereco> updateEndereco(@PathVariable("cpf") String cpf, 
+                                                   @RequestBody EnderecoRequest enderecoRequest) {
+        // O "cpf" é o parâmetro passado na URL, que será usado para buscar e atualizar o endereço
+        Endereco endereco = enderecoService.update(cpf, enderecoRequest); // Chama o serviço para atualizar o endereço
+        if (endereco == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Retorna 404 se o endereço não for encontrado
         }
-        EnderecoResponse response = new EnderecoResponse(
-                updatedEndereco.getId(),
-                updatedEndereco.getCep(),
-                updatedEndereco.getLogradouro(),
-                updatedEndereco.getBairro(),
-                updatedEndereco.getCidade(),
-                updatedEndereco.getEstado(),
-                updatedEndereco.getPais(),
-                updatedEndereco.getComplemento(),
-                updatedEndereco.getUser().getId()
-        );
-        return ResponseEntity.ok(response);
+        return new ResponseEntity<>(endereco, HttpStatus.OK); // Retorna o endereço atualizado com status 200
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEndereco(@PathVariable UUID id) {
-        boolean deleted = enderecoService.deleteById(id);
+    // Buscar um endereço com base no CPF
+    @GetMapping("/{cpf}")
+    public ResponseEntity<Endereco> getEndereco(@PathVariable("cpf") String cpf) {
+        Endereco endereco = enderecoService.findByCpf(cpf); // Chama o serviço para buscar o endereço pelo CPF
+        if (endereco == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Retorna 404 se o endereço não for encontrado
+        }
+        return new ResponseEntity<>(endereco, HttpStatus.OK); // Retorna o endereço encontrado com status 200
+    }
+
+    // Excluir um endereço com base no CPF
+    @DeleteMapping("/{cpf}")
+    public ResponseEntity<Void> deleteEndereco(@PathVariable("cpf") String cpf) {
+        boolean deleted = enderecoService.delete(cpf); // Chama o serviço para excluir o endereço pelo CPF
         if (!deleted) {
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Retorna 404 se o endereço não for encontrado
         }
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Retorna 204 se o endereço for excluído com sucesso
     }
 }

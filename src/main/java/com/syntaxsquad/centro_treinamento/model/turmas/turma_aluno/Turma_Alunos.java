@@ -1,10 +1,8 @@
 package com.syntaxsquad.centro_treinamento.model.turmas.turma_aluno;
 
 import java.util.UUID;
-
-import com.syntaxsquad.centro_treinamento.model.alunos.Alunos;
 import com.syntaxsquad.centro_treinamento.model.turmas.Turma;
-
+import com.syntaxsquad.centro_treinamento.model.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +29,7 @@ public class Turma_Alunos {
     @NotBlank(message = "aluno_cpf é obrigatório")
     @ManyToOne
     @JoinColumn(name = "aluno_cpf", nullable = false)
-    private Alunos aluno;
+    private User user;
 
     public UUID getId() {
         return id;
@@ -49,13 +47,15 @@ public class Turma_Alunos {
         this.turma = turma;
     }
 
-    public Alunos getAluno() {
-        return aluno;
+    public User getUser() {
+        return user;
     }
 
-    public void setAluno(Alunos aluno) {
-        this.aluno = aluno;
+    public void setUser(User user) {
+        this.user = user;
     }
+
+    
 
     
 }
