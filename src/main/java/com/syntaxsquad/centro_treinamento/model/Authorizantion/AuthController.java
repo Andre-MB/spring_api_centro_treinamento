@@ -1,5 +1,6 @@
 package com.syntaxsquad.centro_treinamento.model.authorizantion;
 
+import com.syntaxsquad.centro_treinamento.model.email.EmailService;
 import com.syntaxsquad.centro_treinamento.model.infra.security.TokenService;
 import com.syntaxsquad.centro_treinamento.model.user.User;
 import com.syntaxsquad.centro_treinamento.model.user.UserRepository;
@@ -74,6 +75,13 @@ public class AuthController {
     @Autowired
     private TokenService tokenService;
 
+    private final EmailService emailService;
+
+    @Autowired
+    public AuthController(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(authRequest.getEmail(),
@@ -84,7 +92,12 @@ public class AuthController {
 
         // Gere o token usando o email do usuário autenticado
         var token = tokenService.generateToken(authRequest.getEmail());
+         //email que foi feito login
+      
+         emailService.sendEmail(authRequest.getEmail(), "Login realizado com sucesso!", "Olá, " + authRequest.getEmail() + "! Seu login foi realizado com sucesso.");
+
         return ResponseEntity.ok(new AuthResponse(token));
+       
     }
 
    @PostMapping("/register")
@@ -124,6 +137,16 @@ public class AuthController {
 
         // Salva o novo usuário no repositório
         userRepository.save(user);
+
+        // Envia um e-mail de confirmação
+     
+        String msg = "Seja bem-vindo ao nosso centro de treinamento!\n" +
+        "Seu cadastro foi realizado com sucesso.\n" +
+        "SEU LOGIN: " + userRequest.getEmail() + "\n" +
+        "SUA SENHA: " + userRequest.getPassword();
+
+        emailService.sendEmail(userRequest.getEmail(), "Bem-vindo ao Centro Treinamento",msg);	
+
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

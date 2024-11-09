@@ -1,5 +1,6 @@
 package com.syntaxsquad.centro_treinamento.model.turmas.turma_aluno;
 
+import com.syntaxsquad.centro_treinamento.model.email.EmailService;
 import com.syntaxsquad.centro_treinamento.model.turmas.turma_aluno.Turma_Alunos;
 import com.syntaxsquad.centro_treinamento.model.turmas.turma_aluno.Turma_AlunosRequest;
 import com.syntaxsquad.centro_treinamento.model.turmas.turma_aluno.Turma_AlunosResponse;
@@ -18,6 +19,14 @@ public class Turma_AlunosController {
 
     @Autowired
     private Turma_AlunosService turmaAlunosService;
+
+    @Autowired
+    private EmailService emailService;
+
+    public Turma_AlunosController(Turma_AlunosService turmaAlunosService, EmailService emailService) {
+        this.turmaAlunosService = turmaAlunosService;
+        this.emailService = emailService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Turma_AlunosResponse> getTurma_AlunosById(@PathVariable UUID id) {
@@ -54,6 +63,19 @@ public class Turma_AlunosController {
                 savedTurmaAlunos.getTurma().getId(),
                 savedTurmaAlunos.getUser().getCpf()
         );
+        //enviando confirmcao que aluno esta em uma turma
+      
+        String msg = "Olá, " + savedTurmaAlunos.getUser().getName() + "!\n\n" +
+             "Parabéns! Sua turma foi criada com sucesso no Centro de Treinamento.\n\n" +
+             "Aqui estão alguns detalhes:\n" +
+             "Id da Turma: " + savedTurmaAlunos.getTurma().getId() + "\n" +
+             "Data de Início: " + savedTurmaAlunos.getTurma().getHorario() + "\n\n" +
+             "Estamos ansiosos para ver seu progresso e aprendizado na nova turma. \n" +
+             "Qualquer dúvida, estamos à disposição!\n\n" +
+             "Atenciosamente,\n" +
+             "Equipe Centro de Treinamento";
+        emailService.sendEmail(savedTurmaAlunos.getUser().getEmail(), "Confirmação de Turma", msg);
+
         return ResponseEntity.ok(response);
     }
 

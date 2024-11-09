@@ -1,5 +1,6 @@
 package com.syntaxsquad.centro_treinamento.model.turmas;
 
+import com.syntaxsquad.centro_treinamento.model.email.EmailService;
 import com.syntaxsquad.centro_treinamento.model.turmas.Turma;
 import com.syntaxsquad.centro_treinamento.model.turmas.TurmaRequest;
 import com.syntaxsquad.centro_treinamento.model.turmas.TurmaResponse;
@@ -18,6 +19,14 @@ public class TurmaController {
 
     @Autowired
     private TurmaService turmaService;
+
+    private final EmailService emailService;
+
+
+    @Autowired
+    public TurmaController(EmailService emailService) {
+        this.emailService = emailService;
+}
 
     @GetMapping("/{id}")
     public ResponseEntity<TurmaResponse> getTurmaById(@PathVariable UUID id) {
@@ -57,6 +66,9 @@ public class TurmaController {
                 savedTurma.getTreino().getId(),
                 savedTurma.getHorario()
         );
+        // enviando email confirmando que a turma foi criada
+   
+        emailService.sendEmail(savedTurma.getUser().getEmail(), " Turma - Centro de Treinamento", "Olá, " + savedTurma.getUser().getName() + "! Sua turma foi criada com sucesso.");
         return ResponseEntity.ok(response);
     }
 
