@@ -3,9 +3,7 @@ package com.syntaxsquad.centro_treinamento.model.mensalidade;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import com.syntaxsquad.centro_treinamento.model.alunos.Alunos;
-
+import com.syntaxsquad.centro_treinamento.model.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,9 +24,9 @@ public class Mensalidade {
     private UUID id;
 
     @ManyToOne
-    @NotNull(message = "Cliente é obrigatório")
-    @JoinColumn(name = "client_cpf", nullable = false)
-    private Alunos client;
+    @NotNull(message = "ALUNO é obrigatório")
+    @JoinColumn(name = "aluno_cpf", nullable = false)
+    private User user;
 
     @NotNull(message = "Data de vencimento é obrigatória")
     @Column(name = "data_vencimento", nullable = false)
@@ -58,12 +56,12 @@ public class Mensalidade {
         this.id = id;
     }
 
-    public Alunos getClient() {
-        return client;
+    public User getUser() {
+        return user;
     }
 
-    public void setClient(Alunos client) {
-        this.client = client;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDate getDataVencimento() {

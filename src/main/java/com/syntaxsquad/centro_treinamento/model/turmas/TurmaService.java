@@ -1,12 +1,9 @@
 package com.syntaxsquad.centro_treinamento.model.turmas;
 
-import com.syntaxsquad.centro_treinamento.model.turmas.TurmaRequest;
-import com.syntaxsquad.centro_treinamento.model.turmas.TurmaResponse;
-import com.syntaxsquad.centro_treinamento.model.turmas.TurmaService;
-import com.syntaxsquad.centro_treinamento.model.trainer.TrainerRepository;
+import com.syntaxsquad.centro_treinamento.model.user.User;
+import com.syntaxsquad.centro_treinamento.model.user.UserRepository; // Repositório de User
 import com.syntaxsquad.centro_treinamento.model.treino.TreinoRepository;
 import com.syntaxsquad.centro_treinamento.model.turmas.Turma;
-import com.syntaxsquad.centro_treinamento.model.trainer.Trainer;
 import com.syntaxsquad.centro_treinamento.model.treino.Treino;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,20 +18,26 @@ public class TurmaService {
     private TurmaRepository turmaRepository;
 
     @Autowired
-    private TrainerRepository trainerRepository;
+    private UserRepository userRepository; // Repositório de User
 
     @Autowired
     private TreinoRepository treinoRepository;
 
     public Turma save(TurmaRequest turmaRequest) {
-        Trainer trainer = trainerRepository.findByCpf(turmaRequest.getTrainerCpf())
-                .orElseThrow(() -> new IllegalArgumentException("Trainer not found"));
+        // Aqui buscamos um User e verificamos se ele tem o papel de "trainer"
+        User user = userRepository.findActiveUserByCpf(turmaRequest.getTrainer_Cpf())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Verifica se o usuário possui o papel de "trainer" na lista de authorities
+        if (!user.getRole().toString().equals("TRAINER")) {
+            throw new IllegalArgumentException("User is not a trainer");
+        }
 
         Treino treino = treinoRepository.findById(turmaRequest.getTreinoId())
                 .orElseThrow(() -> new IllegalArgumentException("Treino not found"));
 
         Turma turma = new Turma();
-        turma.setTrainer(trainer);
+        turma.setUser(user); // Associamos o User à turma
         turma.setTreino(treino);
         turma.setHorario(turmaRequest.getHorario());
 
@@ -55,13 +58,20 @@ public class TurmaService {
             return null;
         }
 
-        Trainer trainer = trainerRepository.findByCpf(turmaRequest.getTrainerCpf())
-                .orElseThrow(() -> new IllegalArgumentException("Trainer not found"));
+        // Aqui verificamos se o User tem o papel de "trainer"
+        User user = userRepository.findActiveUserByCpf(turmaRequest.getTrainer_Cpf())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // Verifica se o usuário tem o papel de "trainer"
+        if (!user.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_TRAINER"))) {
+            throw new IllegalArgumentException("User is not a trainer");
+        }
 
         Treino treino = treinoRepository.findById(turmaRequest.getTreinoId())
                 .orElseThrow(() -> new IllegalArgumentException("Treino not found"));
 
-        turma.setTrainer(trainer);
+        turma.setUser(user); // Associamos o User à turma
         turma.setTreino(treino);
         turma.setHorario(turmaRequest.getHorario());
 

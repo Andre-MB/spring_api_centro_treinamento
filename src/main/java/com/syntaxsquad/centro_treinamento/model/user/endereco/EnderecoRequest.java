@@ -11,7 +11,7 @@ public class EnderecoRequest {
     private String estado;
     private String pais;
     private String complemento;
-    private UUID userId;
+    private String aluno_cpf;
     public String getCep() {
         return cep;
     }
@@ -54,14 +54,12 @@ public class EnderecoRequest {
     public void setComplemento(String complemento) {
         this.complemento = complemento;
     }
-    public UUID getUserId() {
-        return userId;
+    public String getAluno_cpf() {
+        return aluno_cpf;
     }
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setAluno_cpf(String aluno_cpf) {
+        this.aluno_cpf = aluno_cpf;
     }
-
-    // Getters e Setters
     
 }
 

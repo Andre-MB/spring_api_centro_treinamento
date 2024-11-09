@@ -28,7 +28,7 @@ public class Turma_AlunosController {
         Turma_AlunosResponse response = new Turma_AlunosResponse(
                 turmaAlunos.getId(),
                 turmaAlunos.getTurma().getId(),
-                turmaAlunos.getAluno().getCpf()
+                turmaAlunos.getUser().getCpf()
         );
         return ResponseEntity.ok(response);
     }
@@ -40,7 +40,7 @@ public class Turma_AlunosController {
                 .map(turmaAlunos -> new Turma_AlunosResponse(
                         turmaAlunos.getId(),
                         turmaAlunos.getTurma().getId(),
-                        turmaAlunos.getAluno().getCpf()
+                        turmaAlunos.getUser().getCpf()
                 ))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responses);
@@ -52,7 +52,7 @@ public class Turma_AlunosController {
         Turma_AlunosResponse response = new Turma_AlunosResponse(
                 savedTurmaAlunos.getId(),
                 savedTurmaAlunos.getTurma().getId(),
-                savedTurmaAlunos.getAluno().getCpf()
+                savedTurmaAlunos.getUser().getCpf()
         );
         return ResponseEntity.ok(response);
     }
@@ -66,7 +66,7 @@ public class Turma_AlunosController {
         Turma_AlunosResponse response = new Turma_AlunosResponse(
                 updatedTurmaAlunos.getId(),
                 updatedTurmaAlunos.getTurma().getId(),
-                updatedTurmaAlunos.getAluno().getCpf()
+                updatedTurmaAlunos.getUser().getCpf()
         );
         return ResponseEntity.ok(response);
     }

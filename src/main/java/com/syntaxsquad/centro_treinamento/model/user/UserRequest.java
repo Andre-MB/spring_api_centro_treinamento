@@ -8,8 +8,8 @@ public class UserRequest {
 
     @Email
     @NotBlank
+    private String cpf;
     private String email;
-
     private String password;
     private Role role;
     private String name;
@@ -81,6 +81,14 @@ public class UserRequest {
 
     public void setLastNome(String lastNome) {
         this.lastNome = lastNome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
     
 }

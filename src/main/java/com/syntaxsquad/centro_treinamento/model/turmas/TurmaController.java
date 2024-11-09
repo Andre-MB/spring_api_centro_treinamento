@@ -27,7 +27,7 @@ public class TurmaController {
         }
         TurmaResponse response = new TurmaResponse(
                 turma.getId(),
-                turma.getTrainer().getCpf(),
+                turma.getUser().getCpf(),
                 turma.getTreino().getId(),
                 turma.getHorario()
         );
@@ -40,7 +40,7 @@ public class TurmaController {
         List<TurmaResponse> responses = turmas.stream()
                 .map(turma -> new TurmaResponse(
                         turma.getId(),
-                        turma.getTrainer().getCpf(),
+                        turma.getUser().getCpf(),
                         turma.getTreino().getId(),
                         turma.getHorario()
                 ))
@@ -53,7 +53,7 @@ public class TurmaController {
         Turma savedTurma = turmaService.save(turmaRequest);
         TurmaResponse response = new TurmaResponse(
                 savedTurma.getId(),
-                savedTurma.getTrainer().getCpf(),
+                savedTurma.getUser().getCpf(),
                 savedTurma.getTreino().getId(),
                 savedTurma.getHorario()
         );
@@ -68,7 +68,7 @@ public class TurmaController {
         }
         TurmaResponse response = new TurmaResponse(
                 updatedTurma.getId(),
-                updatedTurma.getTrainer().getCpf(),
+                updatedTurma.getUser().getCpf(),
                 updatedTurma.getTreino().getId(),
                 updatedTurma.getHorario()
         );

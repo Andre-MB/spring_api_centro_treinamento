@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.syntaxsquad.centro_treinamento.model.alunos.Alunos;
+
 
 import java.util.List;
 
@@ -19,6 +19,7 @@ public class MensalidadeController {
     // Criar uma nova mensalidade
     @PostMapping
     public ResponseEntity<MensalidadeResponse> createMensalidade(@RequestBody MensalidadeRequest request) {
+        
         MensalidadeResponse response = mensalidadeService.createMensalidade(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED); // 201 Created
     }

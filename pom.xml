@@ -11,7 +11,7 @@
 	<groupId>com.syntaxsquad</groupId>
 	<artifactId>centro_treinamento</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
+	<name>centro_treinamento</name>
 	<description>api centro de treinamento</description>
 	<url/>
 	<licenses>

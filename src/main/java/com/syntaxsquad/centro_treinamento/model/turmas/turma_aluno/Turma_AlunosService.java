@@ -3,9 +3,8 @@ package com.syntaxsquad.centro_treinamento.model.turmas.turma_aluno;
 import com.syntaxsquad.centro_treinamento.model.turmas.turma_aluno.Turma_Alunos;
 import com.syntaxsquad.centro_treinamento.model.turmas.Turma;
 import com.syntaxsquad.centro_treinamento.model.turmas.TurmaRepository;
-import com.syntaxsquad.centro_treinamento.model.alunos.AlunoRepository;
-import com.syntaxsquad.centro_treinamento.model.alunos.Alunos;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.syntaxsquad.centro_treinamento.model.user.User;
+import com.syntaxsquad.centro_treinamento.model.user.UserRepository; // Repositório de User
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +21,23 @@ public class Turma_AlunosService {
     private TurmaRepository turmaRepository;
 
     @Autowired
-    private AlunoRepository alunosRepository;
+    private UserRepository userRepository; // Repositório de User
 
     public Turma_Alunos save(Turma_AlunosRequest turmaAlunosRequest) {
         Turma turma = turmaRepository.findById(turmaAlunosRequest.getTurmaId())
                 .orElseThrow(() -> new IllegalArgumentException("Turma not found"));
 
-        Alunos aluno = alunosRepository.findByCpf(turmaAlunosRequest.getAlunoCpf())
-                .orElseThrow(() -> new IllegalArgumentException("Aluno not found"));
+        // Verifica se o usuário é um aluno
+        User user = userRepository.findActiveUserByCpf(turmaAlunosRequest.getAlunoCpf())
+                .orElseThrow(() -> new IllegalArgumentException("Aluno (User) not found"));
 
+        // Verifica se o papel do usuário é "STUDENT"
+        if (!user.getRole().toString().equals("STUDENT")) {
+            throw new IllegalArgumentException("User is not a student");
+        }
         Turma_Alunos turmaAlunos = new Turma_Alunos();
         turmaAlunos.setTurma(turma);
-        turmaAlunos.setAluno(aluno);
+        turmaAlunos.setUser(user);  // Associando o usuário à turma
 
         return turmaAlunosRepository.save(turmaAlunos);
     }
@@ -55,11 +59,18 @@ public class Turma_AlunosService {
         Turma turma = turmaRepository.findById(turmaAlunosRequest.getTurmaId())
                 .orElseThrow(() -> new IllegalArgumentException("Turma not found"));
 
-        Alunos aluno = alunosRepository.findByCpf(turmaAlunosRequest.getAlunoCpf())
-                .orElseThrow(() -> new IllegalArgumentException("Aluno not found"));
+        // Verifica se o usuário é um aluno
+        User user = userRepository.findActiveUserByCpf(turmaAlunosRequest.getAlunoCpf())
+                .orElseThrow(() -> new IllegalArgumentException("Aluno (User) not found"));
+
+        // Verifica se o papel do usuário é "ROLE_STUDENT"
+        if (!user.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_STUDENT"))) {
+            throw new IllegalArgumentException("User is not a student");
+        }
 
         turmaAlunos.setTurma(turma);
-        turmaAlunos.setAluno(aluno);
+        turmaAlunos.setUser(user);  // Associando o usuário à turma
 
         return turmaAlunosRepository.save(turmaAlunos);
     }

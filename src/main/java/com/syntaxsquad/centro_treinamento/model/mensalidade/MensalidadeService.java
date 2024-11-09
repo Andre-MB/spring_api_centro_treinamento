@@ -3,9 +3,9 @@ package com.syntaxsquad.centro_treinamento.model.mensalidade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.syntaxsquad.centro_treinamento.model.alunos.Alunos;
-import com.syntaxsquad.centro_treinamento.model.alunos.AlunoRepository;
-
+import com.syntaxsquad.centro_treinamento.enums.Role;
+import com.syntaxsquad.centro_treinamento.model.user.User;
+import com.syntaxsquad.centro_treinamento.model.user.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,32 +17,50 @@ public class MensalidadeService {
     private MensalidadeRepository mensalidadeRepository;
 
     @Autowired
-    private AlunoRepository clientRepository;
+    private UserRepository userRepository;
 
     // Método para criar uma nova mensalidade
-    public MensalidadeResponse createMensalidade(MensalidadeRequest request) {
-        // Verifica se o cliente existe pelo CPF
-        Optional<Alunos> clientOpt = clientRepository.findByCpf(request.getClientId());
-        if (clientOpt.isEmpty()) {
-            throw new RuntimeException("Cliente não encontrado para o CPF fornecido.");
+    public MensalidadeResponse createMensalidade(MensalidadeRequest mensalidadeRequest) {
+        // Busca do usuário
+        User user = userRepository.findActiveUserByCpf(mensalidadeRequest.getAluno_cpf())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        System.out.println(user.getRole().toString());
+        System.out.println("User role: " + user.getRole());
+        // Verifica se o usuário tem o papel de "ROLE_STUDENT"
+        if (!user.getRole().toString().equals("STUDENT")) {
+            throw new IllegalArgumentException("User is not a student");
         }
-
-        // Criação e preenchimento da nova mensalidade
+    
+        // Verifica se a data de vencimento é anterior à data atual
+        if (mensalidadeRequest.getDataVencimento().isBefore(mensalidadeRequest.getDataPagamento())) {
+            throw new IllegalArgumentException("Payment date cannot be before the due date");
+        }
+    
+        // Criação da mensalidade
         Mensalidade mensalidade = new Mensalidade();
-        mensalidade.setClient(clientOpt.get());
-        mensalidade.setDataVencimento(request.getDataVencimento());
-        mensalidade.setDataPagamento(request.getDataPagamento());
-        mensalidade.setValorMensalidade(request.getValorMensalidade());
-        mensalidade.setStatusMensalidade(request.getStatusMensalidade());
-
-        // Salva a mensalidade no banco de dados
-        Mensalidade savedMensalidade = mensalidadeRepository.save(mensalidade);
-        return toResponse(savedMensalidade); // Retorna a resposta convertida
+        mensalidade.setUser(user); 
+        mensalidade.setDataVencimento(mensalidadeRequest.getDataVencimento());
+        mensalidade.setDataPagamento(mensalidadeRequest.getDataPagamento());
+        mensalidade.setValorMensalidade(mensalidadeRequest.getValorMensalidade());
+        mensalidade.setStatusMensalidade(mensalidadeRequest.getStatusMensalidade());
+    
+        // Salva a mensalidade no banco
+        mensalidade = mensalidadeRepository.save(mensalidade);
+    
+        // Retorna a resposta formatada
+        MensalidadeResponse response = new MensalidadeResponse();
+        response.setId(mensalidade.getId());
+        response.setAluno_cpf(user.getCpf());
+        response.setDataVencimento(mensalidade.getDataVencimento());
+        response.setDataPagamento(mensalidade.getDataPagamento());
+        response.setValorMensalidade(mensalidade.getValorMensalidade());
+        response.setStatusMensalidade(mensalidade.getStatusMensalidade());
+    
+        return response;
     }
-
     // Método para buscar todas as mensalidades de um CPF específico
     public List<MensalidadeResponse> getMensalidadeByCpf(String cpf) {
-        List<Mensalidade> mensalidades = mensalidadeRepository.findByClientCpf(cpf);
+        List<Mensalidade> mensalidades = mensalidadeRepository.findByUserCpf(cpf);
         
         if (mensalidades == null || mensalidades.isEmpty()) {
             throw new RuntimeException("Nenhuma mensalidade encontrada para o CPF fornecido.");
@@ -63,7 +81,7 @@ public class MensalidadeService {
 
     // Método para atualizar uma mensalidade existente
     public MensalidadeResponse updateMensalidade(String cpf, MensalidadeRequest request) {
-        List<Mensalidade> mensalidades = mensalidadeRepository.findByClientCpf(cpf);
+        List<Mensalidade> mensalidades = mensalidadeRepository.findByUserCpf(cpf);
         if (mensalidades.isEmpty()) {
             throw new RuntimeException("Nenhuma mensalidade encontrada para o CPF fornecido.");
         }
@@ -82,7 +100,7 @@ public class MensalidadeService {
 
     // Método para deletar uma mensalidade
     public void deleteMensalidade(String cpf) {
-        List<Mensalidade> mensalidades = mensalidadeRepository.findByClientCpf(cpf);
+        List<Mensalidade> mensalidades = mensalidadeRepository.findByUserCpf(cpf);
         if (mensalidades.isEmpty()) {
             throw new RuntimeException("Nenhuma mensalidade encontrada para o CPF fornecido.");
         }
@@ -95,7 +113,7 @@ public class MensalidadeService {
     private MensalidadeResponse toResponse(Mensalidade mensalidade) {
         MensalidadeResponse response = new MensalidadeResponse();
         response.setId(mensalidade.getId());
-        response.setClientId(mensalidade.getClient().getCpf()); // Adiciona o CPF do cliente
+        response.setAluno_cpf(mensalidade.getUser().getCpf()); // Adiciona o CPF do cliente
         response.setDataVencimento(mensalidade.getDataVencimento());
         response.setDataPagamento(mensalidade.getDataPagamento());
         response.setValorMensalidade(mensalidade.getValorMensalidade());

@@ -5,41 +5,45 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import com.syntaxsquad.centro_treinamento.enums.Role;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
 
+    @NotBlank(message = "CPF é obrigatório")
+    @Pattern(regexp = "\\d{11}", message = "CPF deve ter 11 dígitos")
     @Id
-    @NotBlank(message = "ID é obrigatório")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @Column(name = "cpf", nullable = false, unique = true)
+    private String cpf;
 
     @Email
     @NotBlank(message = "Email é obrigatório")
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "Senha é obrigatório")
+    @NotBlank(message = "Senha é obrigatória")
     @Column(nullable = false)
     private String password;
 
-    @NotBlank(message = "Cargo é obrigatório")
+    @NotNull(message = "Cargo é obrigatório")
     @Column(nullable = false)
     private Role role;
 
@@ -48,9 +52,8 @@ public class User implements UserDetails {
     private String name;
 
     @NotBlank(message = "Sobrenome é obrigatório")
-    @Column(name = "last_nome", nullable = false)
+    @Column(name = "sobrenome", nullable = false)
     private String lastNome;
-    
 
     @NotNull(message = "Data de nascimento é obrigatória")
     @Past(message = "Data de nascimento deve estar no passado")
@@ -61,7 +64,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @NotBlank(message = "Url de imagem é obrigatória")
+    @NotBlank(message = "URL de imagem é obrigatória")
     @Column(nullable = false)
     private String imageUrl;
 
@@ -69,15 +72,32 @@ public class User implements UserDetails {
     public User() {
         this.createdAt = LocalDateTime.now(); // Inicializa com a data e hora atuais
     }
-    
 
-    // Getters e Setters
-    public UUID getId() {
-        return id;
+    // getters e setters para os campos
+
+    // Implementação de UserDetails
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (role == Role.STUDENT) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
+        } else if (role == Role.TRAINER) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
+        } else if (role == Role.ADMIN) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
+        }
+        return authorities;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getEmail() {
@@ -86,10 +106,6 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public void setPassword(String password) {
@@ -132,29 +148,16 @@ public class User implements UserDetails {
         return createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    // Implementação de UserDetails
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        if (role == Role.STUDENT) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
-        } else if (role == Role.TRAINER) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
-            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
-        } else if (role == Role.ADMIN) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-            authorities.add(new SimpleGrantedAuthority("ROLE_TRAINER"));
-            authorities.add(new SimpleGrantedAuthority("ROLE_STUDENT"));
-        }
-        return authorities;
     }
 
     @Override
@@ -182,4 +185,8 @@ public class User implements UserDetails {
         return true;
     }
 
+    @Override
+    public String getPassword() {
+        return password;
+    }
 }

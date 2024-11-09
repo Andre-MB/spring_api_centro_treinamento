@@ -12,9 +12,9 @@ public class EnderecoResponse {
     private String estado;
     private String pais;
     private String complemento;
-    private UUID userId;
+    private String cpf;
 
-    public EnderecoResponse(UUID id, String cep, String logradouro, String bairro, String cidade, String estado, String pais, String complemento, UUID userId) {
+    public EnderecoResponse(UUID id, String cep, String logradouro, String bairro, String cidade, String estado, String pais, String complemento, String cpf) {
         this.id = id;
         this.cep = cep;
         this.logradouro = logradouro;
@@ -23,7 +23,7 @@ public class EnderecoResponse {
         this.estado = estado;
         this.pais = pais;
         this.complemento = complemento;
-        this.userId = userId;
+        this.cpf = cpf;
     }
 
     // Getters e Setters
@@ -91,11 +91,13 @@ public class EnderecoResponse {
         this.complemento = complemento;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
+
+   
 }
