@@ -17,6 +17,7 @@ public class UserRequest {
     private String birthDate;
     private String createdAt;
     private String imageUrl;
+    private String telefone;
 
     // Getters e Setters
     public String getEmail() {
@@ -89,6 +90,14 @@ public class UserRequest {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
     
 }

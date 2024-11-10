@@ -36,7 +36,8 @@ public class UserService {
         user.getLastNome(),
         user.getBirthDate(),
         user.getCreatedAt(),
-        user.getImageUrl());
+        user.getImageUrl(),
+        user.getPhoneNumber());
     }
 
  

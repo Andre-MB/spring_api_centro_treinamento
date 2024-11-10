@@ -134,6 +134,7 @@ public class AuthController {
         user.setBirthDate(birthDate); // Agora usando LocalDate
         user.setImageUrl(userRequest.getImageUrl());
         user.setRole(userRequest.getRole()); 
+        user.setPhoneNumber(userRequest.getTelefone());
 
         // Salva o novo usuário no repositório
         userRepository.save(user);
@@ -166,7 +167,8 @@ public class AuthController {
                 user.getLastNome(),
                 user.getBirthDate(),
                 user.getCreatedAt(),
-                user.getImageUrl()
+                user.getImageUrl(),
+                user.getPhoneNumber()
         );
         return ResponseEntity.ok(userInfo);
     }

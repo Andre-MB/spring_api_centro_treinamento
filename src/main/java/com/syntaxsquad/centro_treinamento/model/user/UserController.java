@@ -48,6 +48,7 @@ public class UserController {
         user.setLastNome(userRequest.getLastNome());
         user.setImageUrl(userRequest.getImageUrl());
         user.setRole(userRequest.getRole());
+        user.setPhoneNumber(userRequest.getTelefone());
         
 
         User updatedUser = userRepository.save(user);
@@ -59,7 +60,8 @@ public class UserController {
                 updatedUser.getLastNome(),
                 updatedUser.getBirthDate(),
                 updatedUser.getCreatedAt(),
-                updatedUser.getImageUrl()
+                updatedUser.getImageUrl(),
+                updatedUser.getPhoneNumber()
         );
 
         return ResponseEntity.ok(userResponse);
@@ -90,7 +92,8 @@ public class UserController {
                         user.getLastNome(),
                         user.getBirthDate(),
                         user.getCreatedAt(),
-                        user.getImageUrl()
+                        user.getImageUrl(),
+                        user.getPhoneNumber()
                 ))
                .collect(Collectors.toList());
         return ResponseEntity.ok(userResponses);
@@ -110,7 +113,8 @@ public class UserController {
                     user.getLastNome(),
                     user.getBirthDate(),
                     user.getCreatedAt(),
-                    user.getImageUrl()
+                    user.getImageUrl(),
+                    user.getPhoneNumber()
             );
             return ResponseEntity.ok(userResponse);
         } else {
