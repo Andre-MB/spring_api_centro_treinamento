@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.syntaxsquad.centro_treinamento.model.email.EmailService;
 import com.syntaxsquad.centro_treinamento.model.user.User;
 import com.syntaxsquad.centro_treinamento.model.user.UserRepository;
 
@@ -21,6 +22,9 @@ public class MensalidadeService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     // Método agendado para verificar mensalidades atrasadas a cada 24 horas
     @Scheduled(fixedRate = 86400000) // 24 horas em milissegundos (86400000 ms)
@@ -40,10 +44,19 @@ public class MensalidadeService {
                 mensalidadeRepository.save(mensalidade);
 
                 System.out.println("Mensalidade " + mensalidade.getId() + " foi marcada como vencida.");
+
+                // Enviar e-mail ao cliente informando sobre o vencimento
+                String emailCliente = mensalidade.getUser().getEmail(); // Supondo que você tenha um relacionamento com Cliente
+                String assunto = "Aviso de Mensalidade Vencida";
+                String corpo = "Prezado(a) " + mensalidade.getUser().getName() + ",\n\n" +
+                               "Sua mensalidade referente ao mês " + mensalidade.getDataVencimento() + " está vencida.\n" +
+                               "Por favor, efetue o pagamento o quanto antes para evitar maiores complicações.\n\n" +
+                               "Atenciosamente,\nEquipe Centro de Treinamento";
+
+                emailService.sendEmail(emailCliente, assunto, corpo);
             }
         }
-    }
-
+        }
     // Método para criar uma nova mensalidade
     public MensalidadeResponse createMensalidade(MensalidadeRequest mensalidadeRequest) {
         User user = userRepository.findActiveUserByCpf(mensalidadeRequest.getAluno_cpf())
@@ -146,5 +159,6 @@ public class MensalidadeService {
     @PostConstruct
     public void iniciarVerificacaoMensalidades() {
         verificarMensalidadesVencidas();  // Chama a verificação logo ao iniciar a aplicação
+
     }
 }

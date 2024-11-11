@@ -32,8 +32,8 @@ public class SecurityConfigurations {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                     // Endpoints abertos
-                    .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                    
 
                     // Permissões para aluno (role aluno, trainer, e admin)
                     .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ROLE_STUDENT", "ROLE_TRAINER", "ROLE_ADMIN")
@@ -49,6 +49,7 @@ public class SecurityConfigurations {
                     .requestMatchers(HttpMethod.GET, "/FichaAvaliacao/**").hasAnyAuthority("ROLE_STUDENT", "ROLE_TRAINER", "ROLE_ADMIN")
                     .requestMatchers(HttpMethod.GET, "/noticacoes/**").hasAnyAuthority("ROLE_STUDENT", "ROLE_TRAINER", "ROLE_ADMIN")
                     .requestMatchers(HttpMethod.GET, "/turma-particulas/**").hasAnyAuthority("ROLE_STUDENT", "ROLE_TRAINER", "ROLE_ADMIN")
+
 
                     // Permissões CRUD para treinador e admin
                     .requestMatchers(HttpMethod.POST, "/users/**").hasAnyAuthority("ROLE_TRAINER", "ROLE_ADMIN")
@@ -84,6 +85,8 @@ public class SecurityConfigurations {
                     .requestMatchers(HttpMethod.POST, "/turma-particulas/**").hasAnyAuthority("ROLE_TRAINER", "ROLE_ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/turma-particulas/**").hasAnyAuthority("ROLE_TRAINER", "ROLE_ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/turma-particulas/**").hasAnyAuthority("ROLE_TRAINER", "ROLE_ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/noticacoes/**").hasAnyAuthority("ROLE_TRAINER", "ROLE_ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/auth/register**").hasAnyAuthority("ROLE_ADMIN","ROLE_TRAINER")
 
                     // Qualquer outra rota deve ser acessível apenas pelo admin
                     .anyRequest().hasAuthority("ROLE_ADMIN")
