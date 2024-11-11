@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.syntaxsquad.centro_treinamento.model.email.EmailService;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,6 +17,9 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     public UserController(UserService userService, UserRepository userRepository) {
@@ -49,6 +54,11 @@ public class UserController {
         user.setImageUrl(userRequest.getImageUrl());
         user.setRole(userRequest.getRole());
         user.setPhoneNumber(userRequest.getTelefone());
+
+       // Envia um e-mail de confirmação para o novo email
+       emailService.sendEmail(user.getEmail(), "Alteração no seu cadastro no Centro de Treinamento", "Seu cadastro foi alterado com sucesso!");
+
+
         
 
         User updatedUser = userRepository.save(user);
@@ -120,5 +130,24 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+    @GetMapping("/alunos/all")
+    public ResponseEntity<List<UserResponse>> getAllAlunos() {
+        // Busca os usuários com o papel "ROLE_STUDENT" ou similar
+        List<User> users = userRepository.findAllAlunos(); // Método customizado para buscar apenas alunos
+        List<UserResponse> userResponses = users.stream()
+                .map(user -> new UserResponse(
+                        user.getCpf(),
+                        user.getEmail(),
+                        user.getRole().name(),
+                        user.getName(),
+                        user.getLastNome(),
+                        user.getBirthDate(),
+                        user.getCreatedAt(),
+                        user.getImageUrl(),
+                        user.getPhoneNumber()
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userResponses);
     }
 }

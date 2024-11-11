@@ -93,6 +93,10 @@ public ResponseEntity<TurmaResponse> createTurma(@RequestBody TurmaRequest turma
                 updatedTurma.getTreino().getId(),
                 updatedTurma.getHorario()
         );
+
+        emailService.sendEmail(updatedTurma.getUser().getEmail(), 
+                               "Turma - Centro de Treinamento", 
+                               "Olá, " + updatedTurma.getUser().getName() + "! Sua turma foi atualizada com sucesso.");
         return ResponseEntity.ok(response);
     }
 

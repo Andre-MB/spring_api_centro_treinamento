@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/fichas")
+@RequestMapping("/FichaAvaliacao")
 public class FichaAvaliacaoController {
 
     @Autowired

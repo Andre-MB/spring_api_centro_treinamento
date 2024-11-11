@@ -27,7 +27,9 @@ public class FichaAvaliacaoService {
 
         // Buscar o usuário com o CPF fornecido e verificar se ele é um estudante ativo
         User user = userRepository.findActiveUserByCpf(request.getAluno_cpf())
+
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
         if (!user.getRole().toString().equals("STUDENT")) {
             throw new IllegalArgumentException("O usuário não é um estudante.");
         }
@@ -128,5 +130,5 @@ public class FichaAvaliacaoService {
         ficha.setIdadeBiologica(request.getIdadeBiologica());
         ficha.setNivelGorduraVisceral(request.getNivelGorduraVisceral());
     }
-    
+
 }

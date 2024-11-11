@@ -146,6 +146,7 @@ public class AuthController {
         "SEU LOGIN: " + userRequest.getEmail() + "\n" +
         "SUA SENHA: " + userRequest.getPassword();
 
+        
         emailService.sendEmail(userRequest.getEmail(), "Bem-vindo ao Centro Treinamento",msg);	
 
 

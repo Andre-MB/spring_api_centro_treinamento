@@ -12,7 +12,9 @@ import java.util.UUID;
 @Repository
 public interface MensalidadeRepository extends JpaRepository<Mensalidade, UUID> {
 
-    // Alterando o nome do método para refletir a associação com a classe User
+ 
     List<Mensalidade> findByUserCpf(String cpf);
+    List<Mensalidade> findByStatusMensalidade(String status);
+  
 }
 
