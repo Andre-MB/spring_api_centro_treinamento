@@ -22,6 +22,9 @@ public class TurmaController {
 
     private final EmailService emailService;
 
+    @Autowired
+    private TurmaRepository turmaRepository;
+
 
     @Autowired
     public TurmaController(EmailService emailService) {
@@ -58,19 +61,25 @@ public class TurmaController {
     }
 
     @PostMapping
-    public ResponseEntity<TurmaResponse> createTurma(@RequestBody TurmaRequest turmaRequest) {
-        Turma savedTurma = turmaService.save(turmaRequest);
-        TurmaResponse response = new TurmaResponse(
-                savedTurma.getId(),
-                savedTurma.getUser().getCpf(),
-                savedTurma.getTreino().getId(),
-                savedTurma.getHorario()
-        );
-        // enviando email confirmando que a turma foi criada
-   
-        emailService.sendEmail(savedTurma.getUser().getEmail(), " Turma - Centro de Treinamento", "Olá, " + savedTurma.getUser().getName() + "! Sua turma foi criada com sucesso.");
-        return ResponseEntity.ok(response);
+public ResponseEntity<TurmaResponse> createTurma(@RequestBody TurmaRequest turmaRequest) {
+    boolean exists = turmaRepository.existsByUser_CpfAndHorario(turmaRequest.getTrainer_Cpf(), turmaRequest.getHorario());
+    if (exists) {
+        throw new RuntimeException("O treinador já possui uma turma nesse horário.");
     }
+    
+    Turma savedTurma = turmaService.save(turmaRequest);
+    TurmaResponse response = new TurmaResponse(
+            savedTurma.getId(),
+            savedTurma.getUser().getCpf(),
+            savedTurma.getTreino().getId(),
+            savedTurma.getHorario()
+    );
+    // Enviar email confirmando que a turma foi criada
+    emailService.sendEmail(savedTurma.getUser().getEmail(), 
+                           "Turma - Centro de Treinamento", 
+                           "Olá, " + savedTurma.getUser().getName() + "! Sua turma foi criada com sucesso.");
+    return ResponseEntity.ok(response);
+}
 
     @PutMapping("/{id}")
     public ResponseEntity<TurmaResponse> updateTurma(@PathVariable UUID id, @RequestBody TurmaRequest turmaRequest) {
@@ -84,6 +93,10 @@ public class TurmaController {
                 updatedTurma.getTreino().getId(),
                 updatedTurma.getHorario()
         );
+
+        emailService.sendEmail(updatedTurma.getUser().getEmail(), 
+                               "Turma - Centro de Treinamento", 
+                               "Olá, " + updatedTurma.getUser().getName() + "! Sua turma foi atualizada com sucesso.");
         return ResponseEntity.ok(response);
     }
 

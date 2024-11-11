@@ -15,11 +15,12 @@ public class UserResponse {
     private LocalDate birthDate;
     private LocalDateTime createdAt;
     private String imageUrl;
+    private String telefone;
 
 
    
     // Construtor com todos os campos
-    public UserResponse(String cpf, String email, String role, String name, String lastName, LocalDate birthDate, LocalDateTime createdAt, String imageUrl) {
+    public UserResponse(String cpf, String email, String role, String name, String lastName, LocalDate birthDate, LocalDateTime createdAt, String imageUrl, String telefone) {
         this.cpf = cpf;
         this.email = email;
         this.role = role;
@@ -28,6 +29,7 @@ public class UserResponse {
         this.birthDate = birthDate;
         this.createdAt = createdAt;
         this.imageUrl = imageUrl;
+        this.telefone = telefone;
     }
 
 

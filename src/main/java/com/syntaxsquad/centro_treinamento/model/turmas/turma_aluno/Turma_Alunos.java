@@ -10,10 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "turma_alunos")
+@Table(name = "turma_alunos" , uniqueConstraints = @UniqueConstraint(columnNames = {"turma_id", "aluno_cpf"}))
 public class Turma_Alunos {
 
     @Id
