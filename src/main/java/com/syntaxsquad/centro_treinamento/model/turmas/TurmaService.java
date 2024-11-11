@@ -39,6 +39,9 @@ public class TurmaService {
     public Turma save(TurmaRequest turmaRequest) {
         User user = userRepository.findActiveUserByCpf(turmaRequest.getTrainer_Cpf())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                if (!user.getRole().toString().equals("TRAINER")) {
+                    throw new IllegalArgumentException("User is not a trainer");
+                }
 
         validateTrainerRole(user);
 
@@ -69,6 +72,9 @@ public class TurmaService {
 
         User user = userRepository.findActiveUserByCpf(turmaRequest.getTrainer_Cpf())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                if (!user.getRole().toString().equals("TRAINER")) {
+                    throw new IllegalArgumentException("User is not a trainer");
+                }
 
         validateTrainerRole(user);
 

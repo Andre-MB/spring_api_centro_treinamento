@@ -68,7 +68,6 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String imageUrl;
 
-
     @NotBlank(message = "Telefone é obrigatória")
     @Pattern(regexp = "\\d{10}", message = "Telefone deve ter 10 dígitos")
     @Column(nullable = false)
@@ -195,7 +194,7 @@ public class User implements UserDetails {
     public String getPassword() {
         return password;
     }
-    
+
     public String getPhoneNumber() {
         return phoneNumber;
     }

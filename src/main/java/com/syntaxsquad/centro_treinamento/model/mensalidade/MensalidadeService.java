@@ -34,7 +34,7 @@ public class MensalidadeService {
             // Verificar se a mensalidade está vencida
             if (mensalidade.getDataVencimento().isBefore(dataAtual)) {
                 // Atualizar o status da mensalidade
-                mensalidade.setStatusMensalidade("VENCIDA");
+                mensalidade.setStatusMensalidade("ATRASADO");
 
                 // Salvar a mensalidade com o novo status
                 mensalidadeRepository.save(mensalidade);

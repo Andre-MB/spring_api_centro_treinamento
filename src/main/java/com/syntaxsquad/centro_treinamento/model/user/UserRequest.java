@@ -15,7 +15,6 @@ public class UserRequest {
     private String name;
     private String lastNome;
     private String birthDate;
-    private String createdAt;
     private String imageUrl;
     private String telefone;
 
@@ -52,13 +51,6 @@ public class UserRequest {
         this.birthDate = birthDate;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
 
     public String getImageUrl() {
         return imageUrl;
